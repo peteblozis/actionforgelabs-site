@@ -4,17 +4,18 @@ import assert from 'node:assert/strict';
 import { resolveProduct } from '../src/index.js';
 
 const ORIGIN = 'https://private-buypoint.example';
+const ACCESS_ENV = {BUYPOINT_TESTER_EMAILS:'tester@example.com'};
 
 function request(body, origin = ORIGIN) {
   return new Request('https://provider.example/api/buypoint/resolve', {
     method: 'POST',
-    headers: {'content-type':'application/json','origin':origin},
+    headers: {'content-type':'application/json','origin':origin,'cf-access-authenticated-user-email':'tester@example.com'},
     body: JSON.stringify(body),
   });
 }
 
 test('fails closed when the provider secret is absent', async () => {
-  const response = await resolveProduct(request({input:{type:'text',value:'Bartenura 750 mL'}}), {BUYPOINT_ALLOWED_ORIGIN:ORIGIN});
+  const response = await resolveProduct(request({input:{type:'text',value:'Bartenura 750 mL'}}), {...ACCESS_ENV, BUYPOINT_ALLOWED_ORIGIN:ORIGIN});
   assert.equal(response.status, 503);
   assert.deepEqual(await response.json(), {error:'provider_not_configured'});
 });
@@ -22,7 +23,7 @@ test('fails closed when the provider secret is absent', async () => {
 test('rejects an unapproved browser origin', async () => {
   const response = await resolveProduct(
     request({input:{type:'text',value:'Bartenura 750 mL'}}, 'https://outside.example'),
-    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
+    {...ACCESS_ENV, BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
   );
   assert.equal(response.status, 403);
 });
@@ -30,7 +31,7 @@ test('rejects an unapproved browser origin', async () => {
 test('photo input requires an actual supported image data URL', async () => {
   const response = await resolveProduct(
     request({input:{type:'photo',image_data_url:'not-an-image'}}),
-    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
+    {...ACCESS_ENV, BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
   );
   assert.equal(response.status, 400);
   assert.deepEqual(await response.json(), {error:'photo_required'});
@@ -58,7 +59,7 @@ test('builds an official Responses API web-search and vision request', async () 
   };
   const response = await resolveProduct(
     request({input:{type:'photo',value:'blue bottle',image_data_url:'data:image/jpeg;base64,AA=='}}),
-    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test', BUYPOINT_MODEL:'gpt-6-astra'},
+    {...ACCESS_ENV, BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test', BUYPOINT_MODEL:'gpt-6-astra'},
     fetchImpl,
   );
   assert.equal(response.status, 200);
@@ -83,7 +84,7 @@ test('rejects matched offers that are not backed by returned web sources', async
   }), {status:200,headers:{'content-type':'application/json'}});
   const response = await resolveProduct(
     request({input:{type:'text',value:'example'}}),
-    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
+    {...ACCESS_ENV, BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test'},
     fetchImpl,
   );
   assert.equal(response.status, 422);
