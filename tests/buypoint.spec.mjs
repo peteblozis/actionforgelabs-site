@@ -98,3 +98,14 @@ test('live provider failure does not fall back to a fixture answer', async ({ pa
   await expect(page.locator('#entryStatus')).toContainText(/provider_not_configured/);
   await expect(page.locator('#result')).toHaveClass(/hidden/);
 });
+
+test('tester can download evidence and is explicitly told where to submit problems', async ({ page }) => {
+  await page.goto(path);
+  await expect(page.getByRole('heading',{name:'Send Your Test Results'})).toBeVisible();
+  await expect(page.getByText('tester-feedback@actionforgelabs.com')).toBeVisible();
+  await expect(page.getByRole('button',{name:'DOWNLOAD TEST RESULTS'})).toBeVisible();
+  await expect(page.getByRole('link',{name:'EMAIL TEST RESULTS'})).toBeVisible();
+  await page.locator('#testerNotes').fill('The current price looked incorrect.');
+  await page.getByRole('link',{name:'EMAIL TEST RESULTS'}).click();
+  await expect(page).toHaveURL(/mailto:tester-feedback%40actionforgelabs\.com|mailto:tester-feedback@actionforgelabs\.com/);
+});
