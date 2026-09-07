@@ -106,6 +106,7 @@ test('tester can download evidence and is explicitly told where to submit proble
   await expect(page.getByRole('button',{name:'DOWNLOAD TEST RESULTS'})).toBeVisible();
   await expect(page.getByRole('link',{name:'EMAIL TEST RESULTS'})).toBeVisible();
   await page.locator('#testerNotes').fill('The current price looked incorrect.');
-  await page.getByRole('link',{name:'EMAIL TEST RESULTS'}).click();
-  await expect(page).toHaveURL(/mailto:tester-feedback%40actionforgelabs\.com|mailto:tester-feedback@actionforgelabs\.com/);
+  const emailLink = page.getByRole('link',{name:'EMAIL TEST RESULTS'});
+  await expect(emailLink).toHaveAttribute('href', /mailto:tester-feedback@actionforgelabs\.com/);
+  await expect(emailLink).toHaveAttribute('href', /The%20current%20price%20looked%20incorrect/);
 });
