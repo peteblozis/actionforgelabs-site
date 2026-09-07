@@ -49,13 +49,16 @@
       "Test results downloaded. Attach the file and any screenshots to the feedback email.";
   });
 
-  document.querySelector("#emailTestResults").addEventListener("click", event => {
-    event.preventDefault();
-    const notes = document.querySelector("#testerNotes").value.trim();
+  const notesField = document.querySelector("#testerNotes");
+  const emailLink = document.querySelector("#emailTestResults");
+  function updateEmailLink() {
+    const notes = notesField.value.trim();
     const subject = encodeURIComponent("BuyPoint private test results");
     const body = encodeURIComponent(
       `Hello ActionForge Labs,\n\nMy BuyPoint test notes:\n${notes || "[Please add your observations here.]"}\n\nI will attach the downloaded BuyPoint test-results file and any screenshots before sending.\n`,
     );
-    location.href = `mailto:${DESTINATION}?subject=${subject}&body=${body}`;
-  });
+    emailLink.href = `mailto:${DESTINATION}?subject=${subject}&body=${body}`;
+  }
+  notesField.addEventListener("input", updateEmailLink);
+  updateEmailLink();
 })();
