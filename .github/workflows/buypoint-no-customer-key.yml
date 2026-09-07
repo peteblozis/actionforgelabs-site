@@ -1,0 +1,28 @@
+name: BuyPoint No Customer API Key Gate
+
+on:
+  pull_request:
+    paths:
+      - "tester/buypoint/**"
+      - "services/buypoint-provider/**"
+      - "docs/buypoint/**"
+      - "tools/buypoint/**"
+      - ".github/workflows/buypoint-no-customer-key.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-customer-api-key:
+    name: Customer never supplies provider key
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Enforce service-owned credential boundary
+        run: node ./tools/buypoint/test-no-customer-api-key.mjs
