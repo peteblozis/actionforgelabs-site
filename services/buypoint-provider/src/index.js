@@ -1,3 +1,5 @@
+import { testerAccess } from "./access.js";
+
 const RESPONSES_URL = "https://api.openai.com/v1/responses";
 const INPUT_TYPES = new Set(["text", "barcode", "url", "photo", "voice"]);
 const MAX_BODY_BYTES = 4_000_000;
@@ -139,6 +141,8 @@ function sameSource(candidate, sources) {
 async function resolveProduct(request, env, fetchImpl = fetch) {
   const origin = allowedOrigin(request, env);
   if (!origin) return json({ error: "origin_not_allowed" }, 403);
+  const access = testerAccess(request, env);
+  if (!access.ok) return json({ error: access.error }, access.status, origin);
   if (!env.BUYPOINT_OPENAI_API_KEY) return json({ error: "provider_not_configured" }, 503, origin);
   const length = Number(request.headers.get("content-length") || 0);
   if (length > MAX_BODY_BYTES) return json({ error: "request_too_large" }, 413, origin);
@@ -208,7 +212,12 @@ export default {
       });
     }
     if (request.method === "GET" && url.pathname === "/health") {
-      return json({ ok: true, service: "buypoint-provider", release: "BUYPOINT-PROVIDER-RC1", configured: Boolean(env.BUYPOINT_OPENAI_API_KEY) });
+      return json({ ok: true, service: "buypoint-provider", release: "BUYPOINT-PROVIDER-RC1", configured: Boolean(env.BUYPOINT_OPENAI_API_KEY), tester_access_configured: Boolean(env.BUYPOINT_TESTER_EMAILS) });
+    }
+    if (request.method === "GET" && url.pathname === "/api/buypoint/access") {
+      const access = testerAccess(request, env);
+      if (!access.ok) return json({ error: access.error }, access.status, origin);
+      return json({ authorized: true, email: access.email }, 200, origin);
     }
     if (request.method === "POST" && url.pathname === "/api/buypoint/resolve") return resolveProduct(request, env);
     return json({ error: "not_found" }, 404);
