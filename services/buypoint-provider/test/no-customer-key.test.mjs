@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import worker, { resolveProduct } from '../src/index.js';
 
 const origin = 'https://buy.example.test';
+const accessEnv = { BUYPOINT_TESTER_EMAILS: 'tester@example.com' };
 
 function request(path, options = {}) {
   return new Request(`https://provider.example.test${path}`, {
     ...options,
-    headers: { origin, ...(options.headers || {}) },
+    headers: { origin, 'cf-access-authenticated-user-email': 'tester@example.com', ...(options.headers || {}) },
   });
 }
 
@@ -15,6 +16,7 @@ test('health never returns credential value', async () => {
   const secret = 'service-owned-secret-never-return';
   const response = await worker.fetch(request('/health'), {
     BUYPOINT_ALLOWED_ORIGIN: origin,
+    ...accessEnv,
     BUYPOINT_OPENAI_API_KEY: secret,
   });
   const text = await response.text();
@@ -30,7 +32,7 @@ test('missing service credential fails closed without asking customer for a key'
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ input: { type: 'text', value: 'test product' } }),
     }),
-    { BUYPOINT_ALLOWED_ORIGIN: origin },
+    { BUYPOINT_ALLOWED_ORIGIN: origin, ...accessEnv },
   );
   const payload = await response.json();
   assert.equal(response.status, 503);

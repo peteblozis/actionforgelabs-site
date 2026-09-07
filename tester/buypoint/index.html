@@ -151,5 +151,6 @@ $('#photo').onchange=()=>{const f=$('#photo').files[0];$('#entryStatus').textCon
 $('#listen').onclick=()=>{const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SpeechRecognition){$('#voiceStatus').textContent='Voice input is unavailable in this browser.';return}const r=new SpeechRecognition();r.lang='en-US';r.interimResults=false;r.onstart=()=>$('#voiceStatus').textContent='Listening…';r.onerror=e=>$('#voiceStatus').textContent=`Voice input unavailable: ${e.error}`;r.onresult=e=>{const heard=e.results[0][0].transcript;$('#query').value=heard;selectMethod('text');$('#entryStatus').textContent=`Heard: “${heard}”. Review, then find your BuyPoint.`};r.start()};
 refreshSaved();renderDecision();
 </script>
+<script src="./feedback.js"></script>
 </body>
 </html>
