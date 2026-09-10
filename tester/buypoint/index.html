@@ -70,6 +70,7 @@ let product={id:'bartenura-moscato-dasti-750',name:"Bartenura Moscato d'Asti DOC
   {store:'Total Wine',price:15.99,sizeMl:750,shipping:'Location sensitive',coupon:'Mix 6: $14.39 each',stock:'Availability not proven',url:'https://www.totalwine.com/wine/champagne-sparkling-wine/muscatmoscato/dasti/bartenura-moscato/p/10612750'},
   {store:'Twin Liquors',price:16.99,sizeMl:750,shipping:'Pickup; shipping not verified',coupon:'None verified',stock:'Visible listing',url:'https://twinliquors.com/shop/product/bartenura-moscato-dasti/5521cefb6561310003bf0300'}]};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let method='text';
+if(new URLSearchParams(location.search).get('pilot')==='interfaces') $('#find').disabled=true;
 function money(n){return '$'+Number(n).toFixed(2)}
 function esc(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 function fileData(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error('photo_read_failed'));reader.readAsDataURL(file)})}
@@ -85,6 +86,8 @@ function fromProvider(payload){
     guidance:found.guidance,
     reason:found.reason,
     live:true,
+    evidence:payload,
+    capturedAt:new Date().toISOString(),
     offers:(found.offers||[]).map(o=>({store:o.retailer,price:Number(o.price),sizeMl:p.quantity_unit==='mL'?Number(p.quantity_value)||null:null,shipping:o.shipping,coupon:o.coupon,stock:o.availability,url:o.source_url}))
   };
 }
@@ -121,7 +124,7 @@ async function findProduct(){
       product=live;$('#entryStatus').textContent=`Exact product matched from ${method} input with current cited evidence.`;
       ['result','offersCard'].forEach(id=>$('#'+id).classList.remove('hidden'));
       $('#providerNotice').textContent='Provider status: LIVE private-provider result. Offers are limited to sources returned with this result.';
-      renderDecision();$('#result').scrollIntoView({behavior:'smooth'});
+      renderDecision();if(window.fairsightPilotProduct) await window.fairsightPilotProduct(product);$('#result').scrollIntoView({behavior:'smooth'});
     }catch(error){
       $('#entryStatus').textContent=`Live provider unavailable (${error.message}). No fallback price or recommendation was claimed.`;
     }finally{$('#find').disabled=false}
@@ -130,20 +133,20 @@ async function findProduct(){
   const value=input.value||'';
   if(method==='photo'||!matchesKnown(value)){$('#entryStatus').textContent='No verified exact match: the live provider is not configured, so no price or recommendation is claimed for this input.';return}
   $('#entryStatus').textContent=`Fixture-only 750 mL match from ${method} input; live provider verification is still required.`;
-  ['result','offersCard','contextCard'].forEach(id=>$('#'+id).classList.remove('hidden'));renderDecision();$('#result').scrollIntoView({behavior:'smooth'});
+  ['result','offersCard','contextCard'].forEach(id=>$('#'+id).classList.remove('hidden'));renderDecision();if(window.fairsightPilotProduct) await window.fairsightPilotProduct(product);$('#result').scrollIntoView({behavior:'smooth'});
 }
 $('#find').onclick=findProduct;
 function renderDecision(){
-  const prefs=safeLoad(PREF,{}),fallback=Number(product.recommended),target=Number(prefs[product.id]||fallback),prices=product.offers.map(o=>Number(o.price)).filter(Number.isFinite),best=Math.min(...prices);
-  const action=product.live&&product.guidance?product.guidance:(best<=target?'BUY':best<=target*1.03?'WAIT':'WATCH');
+  const prefs=window.fairsightPilotState?.targets??safeLoad(PREF,{}),fallback=Number(product.recommended),target=Number(prefs[product.id]||fallback),prices=product.offers.map(o=>Number(o.price)).filter(Number.isFinite),best=Math.min(...prices);
+  const action=!Object.hasOwn(prefs,product.id)&&product.live&&product.guidance?product.guidance:(best<=target?'BUY':best<=target*1.03?'WAIT':'WATCH');
   $('#productName').textContent=product.name;$('#variant').textContent=product.variant||'Exact variant';$('.bottle').textContent=product.quantityMl?product.quantityMl+' mL':'MATCH';
   $('#recommended').textContent=Number.isFinite(target)?money(target):'Not established';$('#best').textContent=Number.isFinite(best)?money(best):'Not found';
   $('#verdict').textContent=action;$('#verdict').className='verdict '+action.toLowerCase();
   $('#headline').textContent=action==='BUY'?'A verified offer meets your BuyPoint.':action==='WAIT'?'The price is close, but not yet at your BuyPoint.':'The best verified offer is above your BuyPoint.';
-  $('#reason').textContent=product.live&&product.reason?product.reason:`${action} for ${money(target)} or less. The best verified 750 mL comparison is ${money(best)}. Shipping and coupon effects are not silently assumed; stock is shown only when evidenced.`;
+  $('#reason').textContent=!Object.hasOwn(prefs,product.id)&&product.live&&product.reason?product.reason:`${action} for ${money(target)} or less. The best verified 750 mL comparison is ${money(best)}. Shipping and coupon effects are not silently assumed; stock is shown only when evidenced.`;
   $('#offers').innerHTML=product.offers.map(o=>`<div class="merchant"><div class="wide"><b>${esc(o.store)}</b><div class="small">${esc(o.shipping)}</div></div><div><span class="small">Price</span><div class="price">${Number.isFinite(o.price)?money(o.price):'Unknown'}</div></div><div><span class="small">Unit</span><div>${Number.isFinite(o.price)&&o.sizeMl?money(o.price/(o.sizeMl/100))+'/100 mL':'Normalized by provider'}</div></div><div><span class="small">Coupon / stock</span><div class="small">${esc(o.coupon)}<br>${esc(o.stock)}</div></div></div>`).join('');
 }
-$('#overridePrice').onclick=()=>{const current=Number($('#recommended').textContent.replace('$','')),raw=prompt('Your preferred BuyPoint',current.toFixed(2)),next=Number(raw);if(!Number.isFinite(next)||next<=0)return;const prefs=safeLoad(PREF,{});prefs[product.id]=next;localStorage.setItem(PREF,JSON.stringify(prefs));renderDecision()};
+$('#overridePrice').onclick=()=>{const current=Number($('#recommended').textContent.replace('$','')),raw=prompt('Your preferred BuyPoint',current.toFixed(2)),next=Number(raw);if(!Number.isFinite(next)||next<=0)return;const prefs=window.fairsightPilotState?.targets??safeLoad(PREF,{});prefs[product.id]=next;localStorage.setItem(PREF,JSON.stringify(prefs));renderDecision()};
 function saved(){return safeLoad(KEY,[])}function refreshSaved(){const items=saved();$('#savedCount').textContent=items.length;$('#savedList').innerHTML=items.length?items.map(x=>`<div class="savedItem"><b>${x.name}</b><div class="small">BuyPoint ${money(x.target)} · ${x.watch?'Price & stock watch requested':'Saved item'} · Back-in-stock: unknown</div></div>`).join(''):'<p class="small">No saved items yet.</p>'}
 function saveItem(watch=false){const items=saved().filter(x=>x.id!==product.id),target=Number($('#recommended').textContent.replace('$',''));items.unshift({id:product.id,name:product.name,target,watch,savedAt:new Date().toISOString()});localStorage.setItem(KEY,JSON.stringify(items));refreshSaved();alert(watch?'Saved locally with price-and-stock watch intent. Live alerts require the notification provider.':'Saved to My BuyPoint on this device.')}
 $('#save').onclick=()=>saveItem(false);$('#watch').onclick=()=>saveItem(true);$('#openSaved').onclick=()=>{refreshSaved();$('#savedDialog').showModal()};$('#closeSaved').onclick=()=>$('#savedDialog').close();
@@ -151,5 +154,6 @@ $('#photo').onchange=()=>{const f=$('#photo').files[0];$('#entryStatus').textCon
 $('#listen').onclick=()=>{const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SpeechRecognition){$('#voiceStatus').textContent='Voice input is unavailable in this browser.';return}const r=new SpeechRecognition();r.lang='en-US';r.interimResults=false;r.onstart=()=>$('#voiceStatus').textContent='Listening…';r.onerror=e=>$('#voiceStatus').textContent=`Voice input unavailable: ${e.error}`;r.onresult=e=>{const heard=e.results[0][0].transcript;$('#query').value=heard;selectMethod('text');$('#entryStatus').textContent=`Heard: “${heard}”. Review, then find your BuyPoint.`};r.start()};
 refreshSaved();renderDecision();
 </script>
+<script type="module" src="./interface-pilot.mjs"></script>
 </body>
 </html>
