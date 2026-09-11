@@ -10,8 +10,11 @@
   "observability": {
     "enabled": true
   },
+  "secrets": {
+    "required": ["BUYPOINT_OPENAI_API_KEY"]
+  },
   "vars": {
-    "BUYPOINT_MODEL": "gpt-6-astra",
-    "BUYPOINT_ALLOWED_ORIGIN": "https://REPLACE_WITH_EXACT_PRIVATE_BUYPOINT_PREVIEW"
+    "BUYPOINT_MODEL": "gpt-5.6-terra",
+    "BUYPOINT_ALLOWED_ORIGIN": "https://pilot-fairsight-interface-20.actionforgelabs-site.pages.dev"
   }
 }
