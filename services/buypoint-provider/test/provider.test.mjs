@@ -58,11 +58,12 @@ test('builds an official Responses API web-search and vision request', async () 
   };
   const response = await resolveProduct(
     request({input:{type:'photo',value:'blue bottle',image_data_url:'data:image/jpeg;base64,AA=='}}),
-    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test', BUYPOINT_MODEL:'gpt-6-astra'},
+    {BUYPOINT_ALLOWED_ORIGIN:ORIGIN, BUYPOINT_OPENAI_API_KEY:'test', BUYPOINT_MODEL:'gpt-5.6-terra'},
     fetchImpl,
   );
   assert.equal(response.status, 200);
   assert.equal(captured.url, 'https://api.openai.com/v1/responses');
+  assert.equal(captured.body.model, 'gpt-5.6-terra');
   assert.deepEqual(captured.body.tools, [{type:'web_search'}]);
   assert.equal(captured.body.text.format.type, 'json_schema');
   assert.equal(captured.body.text.format.strict, true);
