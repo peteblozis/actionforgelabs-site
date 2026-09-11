@@ -163,7 +163,7 @@ async function resolveProduct(request, env, fetchImpl = fetch) {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: env.BUYPOINT_MODEL || "gpt-6-astra",
+      model: env.BUYPOINT_MODEL || "gpt-5.6-terra",
       reasoning: { effort: "low" },
       tools: [{ type: "web_search" }],
       tool_choice: "auto",
