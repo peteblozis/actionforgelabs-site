@@ -1,0 +1,82 @@
+{
+  "time": "2026-09-29T22:39:10.344Z",
+  "base": "http://127.0.0.1:4178",
+  "results": [
+    {
+      "name": "Hub opens BuySignal; HTTP 200",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample CSV HTTP 200",
+      "status": "PASS"
+    },
+    {
+      "name": "Sample import and BUY / WAIT decisions",
+      "status": "PASS"
+    },
+    {
+      "name": "Edit updates without duplication",
+      "status": "PASS"
+    },
+    {
+      "name": "Coupon and exact target boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "Paused items excluded",
+      "status": "PASS"
+    },
+    {
+      "name": "Buy/wait test control",
+      "status": "PASS"
+    },
+    {
+      "name": "Blank price rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Add exact variant with multiline notes",
+      "status": "PASS"
+    },
+    {
+      "name": "CSV download and quoted/multiline round trip",
+      "status": "PASS"
+    },
+    {
+      "name": "Malformed import preserves watchlist",
+      "status": "PASS"
+    },
+    {
+      "name": "Browser persistence after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Feedback download content",
+      "status": "PASS"
+    },
+    {
+      "name": "Delete item",
+      "status": "PASS"
+    },
+    {
+      "name": "Demo loads",
+      "status": "PASS"
+    },
+    {
+      "name": "Clear all",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy PriceWatch redirect",
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile viewport without page overflow",
+      "status": "PASS"
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "status": "PASS"
+    }
+  ]
+}

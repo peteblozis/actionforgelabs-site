@@ -1,0 +1,10 @@
+{
+  "release": "2026-09-29",
+  "status": "AWAITING_LIVE_VERIFICATION",
+  "production_ready": false,
+  "limitations": [
+    "Manual price entry only",
+    "No automatic retailer collection or alerts",
+    "Variant and availability verified by tester"
+  ]
+}

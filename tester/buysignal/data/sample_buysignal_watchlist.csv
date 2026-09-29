@@ -1,0 +1,3 @@
+name,url,retailers,variant,packCount,target,current,adj,active,notes
+Sample Bulk Item,,Amazon > H-E-B > Walmart,96 count,96,56,54.99,0,true,Demo BUY NOW
+Sample Exact Variant,,Amazon > Walmart > Target,Large / exact variant required,1,299,319,0,true,Demo WAIT
