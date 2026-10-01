@@ -1,7 +1,9 @@
 {
   // Isolated provider: Cloudflare Builds production branch = feature/worth-it-relaunch.
   // Build command = blank; root directory = services/buypoint-provider.
-  // Store BUYPOINT_OPENAI_API_KEY as a runtime secret, never a build variable.
+  // BUYPOINT_OPENAI_API_KEY must be stored with Cloudflare secret management.
+  // Wrangler does not support declaring required secrets in wrangler.jsonc;
+  // runtime /health and resolve requests fail closed when the secret is absent.
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "buypoint-provider-preview",
   "main": "src/index.js",
@@ -9,9 +11,6 @@
   "preview_urls": true,
   "observability": {
     "enabled": true
-  },
-  "secrets": {
-    "required": ["BUYPOINT_OPENAI_API_KEY"]
   },
   "vars": {
     "BUYPOINT_MODEL": "gpt-5.6-terra",
