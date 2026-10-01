@@ -1,0 +1,24 @@
+name: Fairsight interface pilot
+on:
+  pull_request:
+    paths:
+      - 'tester/buypoint/**'
+      - 'tests/fairsight-*'
+      - 'package*.json'
+      - '.github/workflows/fairsight-interface-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run test:fairsight:store
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test tests/fairsight-interfaces.spec.mjs tests/buypoint.spec.mjs --project=chromium
