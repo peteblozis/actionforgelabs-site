@@ -1,3 +1,3 @@
 # actionforgelabs-site
-actionforgelabs public website (SageForge Core)
+actionforgelabs public website
 
