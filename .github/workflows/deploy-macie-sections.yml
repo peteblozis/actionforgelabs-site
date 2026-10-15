@@ -1,0 +1,32 @@
+name: Deploy MACIE website sections
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "macie-sections/**"
+      - ".github/workflows/deploy-macie-sections.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-macie-sections
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish tester and private routes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy focused Cloudflare Worker routes
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: macie-sections
+          command: deploy
