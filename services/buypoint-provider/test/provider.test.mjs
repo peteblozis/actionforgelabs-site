@@ -1,10 +1,33 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { resolveProduct } from '../src/index.js';
+import worker, { resolveProduct } from '../src/index.js';
 
 const ORIGIN = 'https://private-buypoint.example';
 const ACCESS_ENV = {BUYPOINT_TESTER_EMAILS:'tester@example.com'};
+
+test('credentialed preflight allows only the exact approved tester origin', async () => {
+  for (const origin of [ORIGIN, 'https://outside.example']) {
+    const response = await worker.fetch(new Request('https://provider.example/api/buypoint/resolve', {
+      method:'OPTIONS', headers:{origin},
+    }), {BUYPOINT_ALLOWED_ORIGIN:ORIGIN});
+    assert.equal(response.status, origin === ORIGIN ? 204 : 403);
+    assert.equal(response.headers.get('access-control-allow-origin'), origin === ORIGIN ? ORIGIN : null);
+    assert.equal(response.headers.get('access-control-allow-credentials'), origin === ORIGIN ? 'true' : null);
+  }
+});
+
+test('credentialed errors preserve tester authentication and never widen CORS', async () => {
+  const response = await resolveProduct(new Request('https://provider.example/api/buypoint/resolve', {
+    method:'POST', headers:{origin:ORIGIN,'content-type':'application/json'},
+    body:JSON.stringify({input:{type:'text',value:'Example'}}),
+  }), {
+    BUYPOINT_ALLOWED_ORIGIN:ORIGIN, ...ACCESS_ENV,
+  });
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal(response.headers.get('access-control-allow-credentials'), 'true');
+});
 
 function request(body, origin = ORIGIN) {
   return new Request('https://provider.example/api/buypoint/resolve', {
