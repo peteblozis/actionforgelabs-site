@@ -2,6 +2,19 @@ import { test, expect } from '@playwright/test';
 
 const path = '/tester/buypoint/';
 
+// The dated fixture exercises interface behavior only. Keep it explicit in
+// these three tests; the shipped default is always the pinned live provider.
+async function useInterfaceFixture(page) {
+  await page.route('**/tester/buypoint/', async route => {
+    const response = await route.fetch();
+    const html = (await response.text()).replace(
+      /(<meta name="buy-point-provider-url" content=")[^"]*(">)/,
+      '$1$2',
+    );
+    await route.fulfill({ response, body: html });
+  });
+}
+
 test('unified first-time journey exposes every supported input without old Fairsight fields', async ({ page }) => {
   await page.goto(path);
   await expect(page).toHaveTitle('BuyPoint Unified Concept Test');
@@ -13,6 +26,7 @@ test('unified first-time journey exposes every supported input without old Fairs
 });
 
 test('known product resolves exact quantity, normalized offers and system BuyPoint', async ({ page }) => {
+  await useInterfaceFixture(page);
   await page.goto(path);
   await page.getByRole('button',{name:'FIND MY BUYPOINT'}).click();
   await expect(page.getByText('EXACT MATCH')).toBeVisible();
@@ -24,6 +38,7 @@ test('known product resolves exact quantity, normalized offers and system BuyPoi
 });
 
 test('unknown product fails closed instead of forcing manual research', async ({ page }) => {
+  await useInterfaceFixture(page);
   await page.goto(path);
   await page.locator('#query').fill('Unrecognized product 987654');
   await page.getByRole('button',{name:'FIND MY BUYPOINT'}).click();
@@ -32,6 +47,7 @@ test('unknown product fails closed instead of forcing manual research', async ({
 });
 
 test('saved item and watch intent persist in My BuyPoint', async ({ page }) => {
+  await useInterfaceFixture(page);
   await page.goto(path);
   await page.getByRole('button',{name:'FIND MY BUYPOINT'}).click();
   page.on('dialog', d=>d.accept());
@@ -59,7 +75,7 @@ test('isolated provider result replaces the dated fixture and preserves evidence
     expect(posted.input.type).toBe('text');
     await route.fulfill({
       status: 200,
-      headers: {'access-control-allow-origin':'*','content-type':'application/json'},
+      headers: {'access-control-allow-origin':'http://127.0.0.1:4173','access-control-allow-credentials':'true','content-type':'application/json'},
       body: JSON.stringify({
         release:'BUYPOINT-PROVIDER-RC1',
         result:{
@@ -90,13 +106,38 @@ test('live provider failure does not fall back to a fixture answer', async ({ pa
   await page.addInitScript(() => { window.BUYPOINT_PROVIDER_URL = 'https://provider.example'; });
   await page.route('https://provider.example/api/buypoint/resolve', route => route.fulfill({
     status:503,
-    headers:{'access-control-allow-origin':'*','content-type':'application/json'},
+    headers:{'access-control-allow-origin':'http://127.0.0.1:4173','access-control-allow-credentials':'true','content-type':'application/json'},
     body:JSON.stringify({error:'provider_not_configured'})
   }));
   await page.goto(path);
   await page.getByRole('button',{name:'FIND MY BUYPOINT'}).click();
   await expect(page.locator('#entryStatus')).toContainText(/provider_not_configured/);
   await expect(page.locator('#result')).toHaveClass(/hidden/);
+});
+
+test('pinned provider keeps authenticated requests and failure never displays fixture prices', async ({ page }) => {
+  let sent = false;
+  await page.route('https://buypoint-provider-preview.peteblozis.workers.dev/api/buypoint/resolve', async route => {
+    sent = true;
+    await route.fulfill({status:503,headers:{
+      'access-control-allow-origin':'http://127.0.0.1:4173',
+      'access-control-allow-credentials':'true','content-type':'application/json',
+    },body:JSON.stringify({error:'provider_not_configured'})});
+  });
+  await page.addInitScript(() => {
+    const realFetch = window.fetch;
+    window.fetch = (url, options) => {
+      window.lastProviderCredentials = options?.credentials;
+      return realFetch(url, options);
+    };
+  });
+  await page.goto(path);
+  await expect(page.locator('meta[name="buy-point-provider-url"]')).toHaveAttribute('content', 'https://buypoint-provider-preview.peteblozis.workers.dev');
+  await page.getByRole('button',{name:'FIND MY BUYPOINT'}).click();
+  await expect(page.locator('#entryStatus')).toContainText('provider_not_configured');
+  await expect(page.locator('#result')).toHaveClass(/hidden/);
+  expect(sent).toBe(true);
+  expect(await page.evaluate(() => window.lastProviderCredentials)).toBe('include');
 });
 
 test('tester can download evidence and is explicitly told where to submit problems', async ({ page }) => {
