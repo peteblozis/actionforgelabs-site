@@ -1,9 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
 
-const root = new URL('../', import.meta.url);
 const lessonDir = new URL('../tester/prompt-lessons/', import.meta.url);
 const lessons = [
  '01-what-is-a-prompt.html','02-clarity-over-cleverness.html',
@@ -40,4 +38,15 @@ test('sandbox checkout cannot be marked verified without actual transaction evid
  assert.equal(item.environment, 'sandbox');
  assert.ok(item.transaction_id && item.license_id && item.readback_verified === true);
  assert.ok(item.checkout_source && item.timestamp && item.commit_sha);
+});
+
+test('tester home links to exactly the eight canonical lesson pages', () => {
+ const home = readFileSync(new URL('index.html', lessonDir), 'utf8');
+ const linked = [...home.matchAll(/href=["']\.\/([^"']+\.html)["']/g)].map(m => m[1]);
+ assert.deepEqual(linked, lessons, 'tester home must link all eight lessons in order');
+ assert.doesNotMatch(home, /<section\s+id=["']lesson-\d/i, 'no conflicting duplicate lesson series');
+ assert.match(home, /mailto:peteblozis@gmail\.com\?subject=Prompt%20Lessons%20Feedback/);
+ const last = readFileSync(new URL(lessons.at(-1), lessonDir), 'utf8');
+ assert.doesNotMatch(last, /tester feedback form on the tester home page/i, 'do not promise a missing form');
+ assert.match(last, /mailto:peteblozis@gmail\.com/);
 });
