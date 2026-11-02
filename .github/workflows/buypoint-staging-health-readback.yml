@@ -1,0 +1,80 @@
+name: BuyPoint Staging Health Readback
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/buypoint-staging-health-readback.yml"
+      - "services/buypoint-provider/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buypoint-staging-health-readback-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  health-readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PROVIDER_HEALTH_URL: https://fix-buypoint-preview-access-20261029-buypoint-provider-preview.peteblozis.workers.dev/health
+      CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+      CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+    steps:
+      - name: Verify noninteractive Access service identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${CF_ACCESS_CLIENT_ID}" || -z "${CF_ACCESS_CLIENT_SECRET}" ]]; then
+            echo "::error title=BuyPoint provider health blocked::Missing CF_ACCESS_CLIENT_ID or CF_ACCESS_CLIENT_SECRET repository secret. Create an approved Cloudflare Access service token for the isolated staging application, store only those two values as repository secrets, and rerun this workflow."
+            exit 1
+          fi
+
+      - name: Read sanitized current provider health
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_file="${RUNNER_TEMP}/buypoint-health.json"
+          status=$(curl --silent --show-error --location             --output "${response_file}"             --write-out "%{http_code}"             --header "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}"             --header "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}"             "${PROVIDER_HEALTH_URL}")
+          if [[ "${status}" != "200" ]]; then
+            echo "::error title=BuyPoint provider health denied::Authenticated staging /health returned HTTP ${status}; verify the Access application audience and service-token policy."
+            exit 1
+          fi
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const path = process.env.RUNNER_TEMP + "/buypoint-health.json";
+          const health = JSON.parse(fs.readFileSync(path, "utf8"));
+          const expected = {
+            ok: true,
+            service: "buypoint-provider",
+            release: "BUYPOINT-PROVIDER-RC1",
+            configured: true,
+            tester_access_configured: true,
+          };
+          for (const [key, value] of Object.entries(expected)) {
+            if (health[key] !== value) {
+              console.error(`::error title=BuyPoint provider health incomplete::Expected ${key}=${JSON.stringify(value)} but received ${JSON.stringify(health[key])}`);
+              process.exit(1);
+            }
+          }
+          console.log(JSON.stringify({
+            ok: health.ok,
+            service: health.service,
+            release: health.release,
+            configured: health.configured,
+            tester_access_configured: health.tester_access_configured,
+          }));
+          NODE
+
+      - name: Record exact branch identity
+        shell: bash
+        run: |
+          {
+            echo "## BuyPoint staging health readback"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- URL: \`${PROVIDER_HEALTH_URL}\`"
+            echo "- Result: authenticated current health PASS"
+            echo "- Boundary: configuration evidence only; no paid upstream call and no ACTS seven-lane admission"
+          } >> "${GITHUB_STEP_SUMMARY}"
