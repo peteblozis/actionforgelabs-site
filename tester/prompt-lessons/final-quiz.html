@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Final Practice Quiz — Prompt Lessons | ActionForge Labs</title>
+<style>
+:root{color-scheme:light;--bg:#f5f7fa;--text:#17212d;--accent:#175c87;--border:#cbd5df}
+*{box-sizing:border-box}
+body{font:18px/1.55 Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);margin:0}
+main{max-width:780px;margin:auto;padding:24px}
+h1{line-height:1.2}
+a{color:var(--accent)}
+fieldset{border:1px solid var(--border);background:white;border-radius:10px;margin:18px 0;padding:18px}
+legend{font-weight:bold;padding:0 6px}
+label{display:block;padding:8px 4px;cursor:pointer}
+input{margin-right:8px}
+button{font:inherit;font-weight:bold;padding:12px 20px;border:0;border-radius:8px;background:var(--accent);color:white;cursor:pointer}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #b45100;outline-offset:3px}
+#score{font-weight:bold;min-height:2em}
+details{background:white;border:1px solid var(--border);padding:18px;border-radius:10px;margin:20px 0}
+summary{cursor:pointer;font-weight:bold}
+.note{border-left:4px solid #b45100;padding-left:12px}
+</style>
+<script src="/tester/prompt-lessons/final-quiz.js" defer></script>
+</head>
+<body><main>
+<p><a href="/tester/prompt-lessons/">← Back to Prompt Lessons</a></p>
+<h1>Final Practice Quiz</h1>
+<p>Eight questions covering the eight lessons. Choose one answer per question, then select <strong>Check my answers</strong>. You can review the explanations and try again.</p>
+<p class="note">Practice only. Your answers and score stay in this browser session; nothing is submitted or recorded. This is not a certification or proof of completed onboarding.</p>
+<form id="quiz">
+<fieldset data-answer="b"><legend>1. What makes a prompt most useful?</legend>
+<label><input type="radio" name="q1" value="a">Using complicated technical words</label>
+<label><input type="radio" name="q1" value="b">Giving AI a clear task and relevant context</label>
+<label><input type="radio" name="q1" value="c">Asking the same vague question repeatedly</label></fieldset>
+<fieldset data-answer="a"><legend>2. Which instruction is clearest?</legend>
+<label><input type="radio" name="q2" value="a">Summarize this in five plain-English bullet points</label>
+<label><input type="radio" name="q2" value="b">Make it better</label>
+<label><input type="radio" name="q2" value="c">Do something interesting</label></fieldset>
+<fieldset data-answer="c"><legend>3. When is a role helpful?</legend>
+<label><input type="radio" name="q3" value="a">When you want AI to hide uncertainty</label>
+<label><input type="radio" name="q3" value="b">When you want to avoid describing the task</label>
+<label><input type="radio" name="q3" value="c">When it clarifies the perspective and audience for the task</label></fieldset>
+<fieldset data-answer="b"><legend>4. Why provide an example?</legend>
+<label><input type="radio" name="q4" value="a">It guarantees a factually correct answer</label>
+<label><input type="radio" name="q4" value="b">It shows the style or format you want</label>
+<label><input type="radio" name="q4" value="c">It eliminates the need to check the result</label></fieldset>
+<fieldset data-answer="a"><legend>5. What is a useful constraint?</legend>
+<label><input type="radio" name="q5" value="a">Keep the reply under 150 words and use a friendly tone</label>
+<label><input type="radio" name="q5" value="b">Make it perfect</label>
+<label><input type="radio" name="q5" value="c">Use any format you like</label></fieldset>
+<fieldset data-answer="c"><legend>6. If the first answer is close but not useful, what next?</legend>
+<label><input type="radio" name="q6" value="a">Assume the tool cannot help</label>
+<label><input type="radio" name="q6" value="b">Copy it without checking</label>
+<label><input type="radio" name="q6" value="c">Explain what is missing and refine the prompt</label></fieldset>
+<fieldset data-answer="b"><legend>7. How should you handle a specific factual claim from AI?</legend>
+<label><input type="radio" name="q7" value="a">Trust it because it sounds confident</label>
+<label><input type="radio" name="q7" value="b">Check it against reliable sources before relying on it</label>
+<label><input type="radio" name="q7" value="c">Assume all AI claims are false</label></fieldset>
+<fieldset data-answer="a"><legend>8. What belongs in a reusable prompt library?</legend>
+<label><input type="radio" name="q8" value="a">Prompts that work, with their purpose and useful examples</label>
+<label><input type="radio" name="q8" value="b">Only prompts you have never tested</label>
+<label><input type="radio" name="q8" value="c">Every AI answer without context</label></fieldset>
+<button type="submit">Check my answers</button>
+<p id="score" role="status" aria-live="polite"></p>
+</form>
+<details id="answers"><summary>Answer key and explanations</summary>
+<ol>
+<li><strong>B.</strong> Clear tasks and context make answers more relevant.</li>
+<li><strong>A.</strong> A specific output format is easier to follow and evaluate.</li>
+<li><strong>C.</strong> A role can set a useful perspective, but it does not replace instructions.</li>
+<li><strong>B.</strong> Examples clarify desired structure and style.</li>
+<li><strong>A.</strong> Length and tone are concrete constraints.</li>
+<li><strong>C.</strong> Iteration improves an imperfect first result.</li>
+<li><strong>B.</strong> Verify consequential factual claims independently.</li>
+<li><strong>A.</strong> Save successful prompts with context for reuse.</li>
+</ol></details>
+<p><a href="/tester/prompt-lessons/">Return to the lesson list</a></p>
+</main></body></html>
