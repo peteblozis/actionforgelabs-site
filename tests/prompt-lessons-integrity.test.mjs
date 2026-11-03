@@ -33,7 +33,10 @@ test('local lesson links resolve inside the tester lesson folder', () => {
 
 test('sandbox checkout cannot be marked verified without actual transaction evidence', () => {
  const evidence = new URL('../evidence/prompt-lessons/sandbox-purchase-verified.json', import.meta.url);
- if (!existsSync(evidence)) return; // No claim made: not a passing purchase verification
+ if (!existsSync(evidence)) {
+  test.skip('BLOCKED: no real Freemius sandbox purchase and entitlement readback evidence');
+  return;
+ }
  const item = JSON.parse(readFileSync(evidence, 'utf8'));
  assert.equal(item.environment, 'sandbox');
  assert.ok(item.transaction_id && item.license_id && item.readback_verified === true);
