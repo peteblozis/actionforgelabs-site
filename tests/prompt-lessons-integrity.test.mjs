@@ -31,10 +31,10 @@ test('local lesson links resolve inside the tester lesson folder', () => {
  }
 });
 
-test('sandbox checkout cannot be marked verified without actual transaction evidence', () => {
+test('sandbox checkout cannot be marked verified without actual transaction evidence', (t) => {
  const evidence = new URL('../evidence/prompt-lessons/sandbox-purchase-verified.json', import.meta.url);
  if (!existsSync(evidence)) {
-  test.skip('BLOCKED: no real Freemius sandbox purchase and entitlement readback evidence');
+  t.skip('BLOCKED: no real Freemius sandbox purchase and entitlement readback evidence');
   return;
  }
  const item = JSON.parse(readFileSync(evidence, 'utf8'));
