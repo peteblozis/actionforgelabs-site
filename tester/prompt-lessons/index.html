@@ -1,149 +1,37 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Prompt Lessons Tester System</title>
+<title>Prompt Lessons — Tester Start | ActionForge Labs</title>
 <style>
-:root{--bg:#f6f7f4;--paper:#fff;--text:#1f2933;--accent:#1f5f85;--border:#d6dde5;}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6;font-size:18px}
-header{background:linear-gradient(135deg,var(--accent),#12394f);color:white;padding:30px 22px}
-.wrap,main,footer{max-width:980px;margin:0 auto}
-main{background:var(--paper);padding:30px 26px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
-h1{font-size:34px;margin:0 0 8px} h2{font-size:27px;margin-top:34px} h3{font-size:22px;margin-top:24px}
-a{color:var(--accent);font-weight:bold}
-.card,.lesson{border:1px solid var(--border);border-radius:14px;padding:18px;margin:18px 0;background:#fbfcfd}
-.navgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.navgrid a{display:block;border:1px solid var(--border);border-radius:12px;padding:12px;background:white;text-decoration:none;color:var(--text)}
-blockquote{border-left:6px solid var(--accent);background:#eef6fa;margin:18px 0;padding:14px 16px;font-size:19px}
-li{margin:8px 0}
-footer{color:#56616f;padding:18px 26px 40px;font-size:15px}
-.badge{display:inline-block;background:#e9f2f7;color:#1f5f85;border-radius:999px;padding:4px 10px;font-size:14px;font-weight:bold}
-@media(max-width:700px){body{font-size:17px}h1{font-size:28px}main{padding:22px 18px}}
+:root{color-scheme:light;--ink:#172b3d;--line:#d5dfe7;--blue:#155b87}
+*{box-sizing:border-box}body{font:18px/1.55 system-ui,Arial,sans-serif;color:var(--ink);background:#f4f7fa;margin:0}
+main{max-width:780px;margin:3rem auto;padding:2rem;background:white;border:1px solid var(--line);border-radius:14px}
+h1{font-size:2rem;line-height:1.2}h2{font-size:1.3rem}a{color:var(--blue)}a:focus-visible{outline:3px solid #ed9e29;outline-offset:3px}
+li{margin:.7rem 0}footer{font-size:.85rem;border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem}
+.notice{padding:1rem;background:#eaf4fb;border-left:4px solid var(--blue)}
+@media(max-width:600px){main{margin:0;padding:1.2rem;border-radius:0}}
 </style>
 </head>
-<body>
-<header id="top"><div class="wrap"><div class="badge">Tester Area</div><h1>Prompt Lessons Tester System</h1><p>Eight short lessons for learning how to get better results from AI.</p></div></header>
-<main>
-<div class="card">
-<h2>How to use this system</h2>
+<body><main>
+<p class="notice"><strong>Tester edition.</strong> This is the private tester learning path, not a purchase confirmation or paid entitlement screen. Access must be enforced by the hosting identity provider; noindex alone does not restrict access.</p>
+<h1>Prompt Lessons</h1>
+<p>Eight short lessons for writing better instructions to AI. Start with Lesson 1, work in order, and practice each example before moving on.</p>
+<h2>Start learning</h2>
 <ol>
-<li>Work through the eight lessons in order.</li>
-<li>Try the prompt idea in each lesson.</li>
-<li>Answer the feedback questions.</li>
-<li>Email feedback to <strong>peteblozis@gmail.com</strong> with the subject line: <strong>Prompt Lessons Feedback</strong>.</li>
+<li><a href="./01-what-is-a-prompt.html">What Is a Prompt, Really?</a></li>
+<li><a href="./02-clarity-over-cleverness.html">Clarity Over Cleverness</a></li>
+<li><a href="./03-give-it-a-role.html">Give It a Role</a></li>
+<li><a href="./04-show-dont-tell.html">Show, Don't Tell — Examples</a></li>
+<li><a href="./05-constraints-and-format.html">Constraints and Format</a></li>
+<li><a href="./06-iterating-not-redoing.html">Iterating, Not Redoing</a></li>
+<li><a href="./07-when-it-goes-wrong.html">When It Goes Wrong</a></li>
+<li><a href="./08-building-a-prompt-library.html">Building a Prompt Library</a></li>
 </ol>
-</div>
-<h2>Core idea</h2>
-<blockquote>AI works better when you tell it what to do, not when you just ask it questions.</blockquote>
-<h2>The eight lessons</h2>
-<div class="navgrid"><a href="#lesson-1">Lesson 1: How to Get Better Answers from AI</a>
-<a href="#lesson-2">Lesson 2: The Two Lines That Change Everything</a>
-<a href="#lesson-3">Lesson 3: Start With the Instruction</a>
-<a href="#lesson-4">Lesson 4: Tell AI How You Want the Answer</a>
-<a href="#lesson-5">Lesson 5: When Answers Feel Shallow</a>
-<a href="#lesson-6">Lesson 6: Is This Real News or Just Marketing?</a>
-<a href="#lesson-7">Lesson 7: Turn Useful Prompts Into Reusable Tools</a>
-<a href="#lesson-8">Lesson 8: Let AI Build the Prompt for You</a></div>
-<section id="lesson-1" class="lesson"><h2>Lesson 1: How to Get Better Answers from AI</h2>
-<h3>Important Note About the Tester Version</h3>
-<p>This is a <strong>tester version</strong> of a system that will eventually be sold. During testing, access is provided in exchange for following the process and sending feedback.</p>
-<p>People who participate at that level will continue receiving lessons at no cost. If someone prefers not to provide feedback or follow the process, the system will still be available later as a paid product.</p>
-<h3>Core idea</h3>
-<p>Most people think AI works like Google. It does not. AI works more like <strong>a helper waiting for instructions</strong>.</p>
-<p>If you give weak instructions, you get weak results. If you give clear instructions, results improve immediately.</p>
-<h3>What most people do</h3>
-<ul><li>"Rewrite this"</li><li>"Help me with an email"</li><li>"What should I do?"</li></ul>
-<p>AI answers, but the response often feels generic, shallow, or not quite right. The problem is usually that the instruction was too vague.</p>
-<h3>Try this</h3>
-<ol><li>Use AI for any task.</li><li>Add one clear instruction.</li><li>Notice whether the answer improves.</li></ol>
-<h3>Feedback questions</h3>
-<ol><li>What task did you try with AI?</li><li>What extra instruction did you add?</li><li>Did the answer improve? If yes, how?</li><li>Was anything unclear?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-2" class="lesson"><h2>Lesson 2: The Two Lines That Change Everything</h2>
-<p>From this point forward, <strong>always end your prompts with these two lines</strong>:</p>
-<blockquote>Enhance this prompt.<br>Refine this prompt.</blockquote>
-<p><strong>Enhance</strong> means add what is missing: helpful context, structure, roles, or examples.</p>
-<p><strong>Refine</strong> means tighten what is there: clearer wording, less ambiguity, and better focus.</p>
-<p>Used together, they tell AI: <strong>First make this better - then make it precise.</strong></p>
-<h3>Try this</h3>
-<ol><li>Use AI for any task.</li><li>End the prompt with the two lines above.</li><li>Notice the difference.</li></ol>
-<h3>Feedback questions</h3>
-<ol><li>What did you ask AI to do?</li><li>Did you add both lines?</li><li>What changed in the answer?</li><li>Was the rule clear?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-3" class="lesson"><h2>Lesson 3: Start With the Instruction</h2>
-<p>AI works best when it sees <strong>what you want it to do</strong> before it sees details.</p>
-<p>When possible, start with the instruction first, then add any background or content underneath.</p>
-<blockquote>Here is what I want - now here is what it applies to.</blockquote>
-<h3>Example</h3>
-<blockquote>Help me write a calm, friendly reply.<br><br>Here is the situation: my friend is upset about a schedule change, and I do not want to sound harsh.<br><br>Enhance this prompt.<br>Refine this prompt.</blockquote>
-<h3>Feedback questions</h3>
-<ol><li>Did starting with the instruction make the prompt easier?</li><li>What instruction did you start with?</li><li>Did you use Enhance/Refine?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-4" class="lesson"><h2>Lesson 4: Tell AI How You Want the Answer</h2>
-<p>If you care about <strong>how</strong> the answer looks, say so.</p>
-<p>A few words like "bullet points," "short paragraph," or "plain English" often make a big difference.</p>
-<p>You are not being picky - you are being clear.</p>
-<h3>Helpful habit: use a short example</h3>
-<p>If you want a certain style or type of answer, showing a short example often works faster than explaining it.</p>
-<blockquote>Write this in a similar style to the example below.</blockquote>
-<h3>Feedback questions</h3>
-<ol><li>What format did you ask for?</li><li>Did the answer become easier to use?</li><li>Would a short example have helped?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-5" class="lesson"><h2>Lesson 5: When Answers Feel Shallow</h2>
-<p>Sometimes AI gives an answer that is technically okay but not very useful. Often that happens because AI does not have enough context.</p>
-<p>Adding a role, such as "act as a reviewer" or "act as a planner," often improves results - especially before you apply the enhance/refine rule.</p>
-<h3>Context can include</h3>
-<ul><li>Who the answer is for</li><li>What the goal is</li><li>What tone you want</li><li>What problem you are trying to solve</li><li>A short example or reference</li></ul>
-<h3>Feedback questions</h3>
-<ol><li>What context did you add?</li><li>Did the response become less shallow?</li><li>What role, if any, did you give AI?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-6" class="lesson"><h2>Lesson 6: Is This Real News or Just Marketing?</h2>
-<p>This lesson shows you how to use AI to quickly evaluate a long article without reading every word.</p>
-<h3>The prompt to use</h3>
-<blockquote>You are an objective analyst.<br>
-Review the following article and determine whether it is primarily:<br>
-(1) a marketing or promotional piece, or<br>
-(2) a legitimate news or informational article.<br><br>
-If it is primarily marketing, briefly explain why.<br><br>
-If it is a legitimate news or informational article, extract the key facts and list them in order of importance, with the most important first.<br><br>
-Keep the analysis factual, neutral, and concise.<br><br>
-Enhance this prompt.<br>Refine this prompt.</blockquote>
-<p>Then paste the article below it.</p>
-<p><strong>Important:</strong> AI can sound confident even when it is wrong. Treat AI as a fast assistant, not a final authority.</p>
-<h3>Feedback questions</h3>
-<ol><li>What article did you test?</li><li>Was it mostly marketing or useful information?</li><li>Did AI identify the key facts clearly?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-7" class="lesson"><h2>Lesson 7: Turn Useful Prompts Into Reusable Tools</h2>
-<p>Good prompts are rarely perfect the first time. Trying a prompt, adjusting it, and reusing it later is how this is meant to work.</p>
-<p>When you get a prompt that works well, save it. Over time, you will build a small library of prompts you can reuse instead of starting from scratch.</p>
-<p>That is when AI stops being a novelty and starts saving real time.</p>
-<h3>Feedback questions</h3>
-<ol><li>Which prompt from this course would you save?</li><li>What would you name it?</li><li>Where would you store it?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<section id="lesson-8" class="lesson"><h2>Lesson 8: Let AI Build the Prompt for You</h2>
-<p>This is the capstone lesson. It removes the last common frustration people have with AI:</p>
-<blockquote>Am I wording this correctly?</blockquote>
-<p>You can first ask AI to design the instructions for the task. You become the director. AI becomes the prompt designer.</p>
-<h3>The prompt that builds a prompt</h3>
-<blockquote>You are an expert prompt designer.<br>
-I want to accomplish the following task:<br>
-[briefly describe what you want to do].<br><br>
-Please create a clear, well-structured prompt that I can use to get the best possible result.<br><br>
-If important information is missing, identify it or make reasonable assumptions.<br><br>
-Present the final prompt in a ready-to-use form.<br><br>
-Enhance this prompt.<br>Refine this prompt.</blockquote>
-<h3>Feedback questions</h3>
-<ol><li>What task did you use the prompt-builder for?</li><li>Did AI create a better prompt than you would have written?</li><li>Which lesson helped you most?</li><li>What should be changed before this system is sold?</li></ol>
-<p><a href="#top">Back to top</a></p></section>
-<div class="card">
-<h2>Final feedback</h2>
-<p>After Lesson 8, email final feedback to <strong>peteblozis@gmail.com</strong>.</p>
-<p>Tell us what helped most, what was unclear, and what should be changed before this is sold.</p>
-</div>
-</main>
-<footer><p>Feedback: peteblozis@gmail.com</p><p>ActionForge Labs - Prompt Lessons Tester System</p></footer>
-</body></html>
+<h2>Feedback</h2>
+<p>After completing the lessons, email <a href="mailto:peteblozis@gmail.com?subject=Prompt%20Lessons%20Feedback">Prompt Lessons Feedback</a> to the current verified owner contact. Describe what worked, what was confusing, and what should change. The dedicated feedback@ and testers@ routing remains under verification and is not represented here as operational.</p>
+<p>No purchase or subscription is needed for this internal tester edition. Commercial checkout and onboarding remain gated until verified separately.</p>
+<footer>ActionForge Labs · Prompt Lessons tester program</footer>
+</main></body></html>
