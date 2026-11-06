@@ -1,0 +1,21 @@
+name: Prompt Lessons commercial negative control
+on:
+  pull_request:
+    paths:
+      - 'tests/prompt-lessons-commercial-gate.test.mjs'
+      - 'tests/prompt-lessons-commercial-negative-control.test.mjs'
+      - '.github/workflows/prompt-lessons-commercial-negative-control.yml'
+      - 'evidence/prompt-lessons/commercial-readiness.json'
+  workflow_dispatch:
+jobs:
+  fail-closed:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify missing-evidence negative control
+        run: node --test tests/prompt-lessons-commercial-negative-control.test.mjs
