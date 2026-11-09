@@ -26,6 +26,12 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
   const time = Date.parse(v.checked_at);
   assert.ok(Number.isFinite(time) && time <= Date.now(), 'BLOCKED: '+key+' has invalid or future check timestamp');
  }
+ // All commercial evidence must be attributable to the exact same candidate build.
+ // Otherwise an old checkout receipt could be mixed with a new delivery build.
+ const candidate = e.sandbox_checkout.source_commit.toLowerCase();
+ for (const key of required) {
+  assert.equal(e[key].source_commit.toLowerCase(), candidate, 'BLOCKED: '+key+' evidence belongs to a different source build');
+ }
  assert.equal(e.sandbox_checkout.environment, 'sandbox');
  assert.ok(typeof e.sandbox_checkout.transaction_id === 'string' && e.sandbox_checkout.transaction_id.trim(), 'BLOCKED: no sandbox transaction ID');
  assert.ok(typeof e.entitlement_readback.license_id === 'string' && e.entitlement_readback.license_id.trim(), 'BLOCKED: no entitlement readback license');
