@@ -38,4 +38,15 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
  assert.equal(e.sandbox_checkout.source_commit, e.entitlement_readback.source_commit, 'BLOCKED: checkout and entitlement evidence refer to different builds');
  assert.ok(e.feedback_inbox.received_message_id && e.testers_inbox.received_message_id, 'BLOCKED: sent email alone is not proof of inbox receipt');
  assert.ok(e.conversion_event.event_id, 'BLOCKED: no observed conversion event ID');
+ // Reject obvious synthetic fixtures even when all source hashes agree.
+ // These checks are not substitutes for independently reading provider records.
+ for (const [label, value] of [
+  ['sandbox transaction', e.sandbox_checkout.transaction_id],
+  ['entitlement license', e.entitlement_readback.license_id],
+  ['feedback inbox receipt', e.feedback_inbox.received_message_id],
+  ['testers inbox receipt', e.testers_inbox.received_message_id],
+  ['conversion event', e.conversion_event.event_id],
+ ]) {
+  assert.ok(typeof value === 'string' && !/^(synthetic|fake|mock|test[-_]?only|placeholder|dummy)/i.test(value.trim()), 'BLOCKED: '+label+' uses a synthetic identifier');
+ }
 });
