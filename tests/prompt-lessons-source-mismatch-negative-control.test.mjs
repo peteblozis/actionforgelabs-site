@@ -36,6 +36,12 @@ test('release gate rejects a receipt from a different source build', () => {
     const result = spawnSync(process.execPath, ['--test', join(root, 'tests', 'prompt-lessons-commercial-gate.test.mjs')], { env, encoding: 'utf8' });
     assert.notEqual(result.status, 0, 'release gate falsely accepted a mismatched source receipt');
     assert.match(result.stdout + result.stderr, /evidence belongs to a different source build/, 'gate must fail specifically on source binding, not a missing field');
+    // Positive source binding is insufficient: obvious fake provider IDs must also fail closed.
+    receipt.delivery.source_commit = commit;
+    writeFileSync(join(root, 'evidence', 'prompt-lessons', 'commercial-readiness.json'), JSON.stringify(receipt));
+    const fake = spawnSync(process.execPath, ['--test', join(root, 'tests', 'prompt-lessons-commercial-gate.test.mjs')], { env, encoding: 'utf8' });
+    assert.notEqual(fake.status, 0, 'release gate falsely accepted synthetic purchase and delivery IDs');
+    assert.match(fake.stdout + fake.stderr, /uses a synthetic identifier/, 'gate must specifically reject synthetic provider identifiers');
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
