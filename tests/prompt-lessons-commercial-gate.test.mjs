@@ -37,6 +37,7 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
  assert.ok(typeof e.entitlement_readback.license_id === 'string' && e.entitlement_readback.license_id.trim(), 'BLOCKED: no entitlement readback license');
  assert.equal(e.sandbox_checkout.source_commit, e.entitlement_readback.source_commit, 'BLOCKED: checkout and entitlement evidence refer to different builds');
  assert.ok(e.feedback_inbox.received_message_id && e.testers_inbox.received_message_id, 'BLOCKED: sent email alone is not proof of inbox receipt');
+ assert.notEqual(String(e.feedback_inbox.received_message_id).trim(), String(e.testers_inbox.received_message_id).trim(), 'BLOCKED: feedback and testers inboxes reuse one message receipt');
  assert.ok(e.conversion_event.event_id, 'BLOCKED: no observed conversion event ID');
  // Reject obvious synthetic fixtures even when all source hashes agree.
  // These checks are not substitutes for independently reading provider records.
