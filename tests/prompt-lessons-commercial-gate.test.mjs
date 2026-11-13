@@ -21,7 +21,8 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
   assert.ok(typeof v.evidence_url === 'string', 'BLOCKED: '+key+' missing evidence URL');
   const url = new URL(v.evidence_url);
   assert.equal(url.protocol, 'https:', 'BLOCKED: '+key+' evidence must use HTTPS');
-  assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example'), 'BLOCKED: '+key+' uses placeholder evidence');
+  assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example') && !url.hostname.toLowerCase().endsWith('.localhost') && !url.hostname.toLowerCase().endsWith('.local') && !url.hostname.toLowerCase().endsWith('.test') && !url.hostname.toLowerCase().endsWith('.invalid'), 'BLOCKED: '+key+' uses placeholder evidence');
+  assert.ok(!url.username && !url.password && !url.hash, 'BLOCKED: '+key+' evidence URL embeds credentials or fragments');
   assert.ok(sha.test(v.source_commit), 'BLOCKED: '+key+' lacks full source commit');
   const time = Date.parse(v.checked_at);
   assert.ok(Number.isFinite(time) && time <= Date.now(), 'BLOCKED: '+key+' has invalid or future check timestamp');
