@@ -4,6 +4,7 @@ on:
     paths:
       - 'tests/prompt-lessons-commercial-gate.test.mjs'
       - 'tests/prompt-lessons-commercial-negative-control.test.mjs'
+      - 'tests/prompt-lessons-evidence-url-negative-control.test.mjs'
       - '.github/workflows/prompt-lessons-commercial-negative-control.yml'
       - 'evidence/prompt-lessons/commercial-readiness.json'
   workflow_dispatch:
@@ -18,4 +19,4 @@ jobs:
         with:
           node-version: '22'
       - name: Verify missing-evidence negative control
-        run: node --test tests/prompt-lessons-commercial-negative-control.test.mjs
+        run: node --test tests/prompt-lessons-commercial-negative-control.test.mjs tests/prompt-lessons-evidence-url-negative-control.test.mjs
