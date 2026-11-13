@@ -27,7 +27,7 @@ test('release gate rejects a receipt from a different source build', () => {
     receipt.sandbox_checkout.transaction_id = 'SYNTHETIC-NOT-A-TRANSACTION';
     receipt.entitlement_readback.license_id = 'SYNTHETIC-NOT-A-LICENSE';
     receipt.feedback_inbox.received_message_id = 'SYNTHETIC-NOT-A-MESSAGE';
-    receipt.testers_inbox.received_message_id = 'SYNTHETIC-NOT-A-MESSAGE';
+    receipt.testers_inbox.received_message_id = 'SYNTHETIC-NOT-A-TESTER-MESSAGE';
     receipt.conversion_event.event_id = 'SYNTHETIC-NOT-AN-EVENT';
     receipt.delivery.source_commit = 'b'.repeat(40);
     writeFileSync(join(root, 'evidence', 'prompt-lessons', 'commercial-readiness.json'), JSON.stringify(receipt));
