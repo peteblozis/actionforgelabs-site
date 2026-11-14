@@ -24,8 +24,8 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
   assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example') && !url.hostname.toLowerCase().endsWith('.localhost') && !url.hostname.toLowerCase().endsWith('.local') && !url.hostname.toLowerCase().endsWith('.test') && !url.hostname.toLowerCase().endsWith('.invalid'), 'BLOCKED: '+key+' uses placeholder evidence');
   assert.ok(!url.username && !url.password && !url.hash, 'BLOCKED: '+key+' evidence URL embeds credentials or fragments');
   // Evidence links must not point at private networks or link-local services.
-  const host = url.hostname.toLowerCase().replace(/^\\[|\\]$/g, '');
-  const ipv4 = host.match(/^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$/);
+  const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (ipv4) {
     const octets = ipv4.slice(1).map(Number);
     assert.ok(octets.every(n => n <= 255), 'BLOCKED: invalid IPv4 evidence host');
