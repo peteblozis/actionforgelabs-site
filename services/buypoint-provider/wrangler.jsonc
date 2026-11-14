@@ -9,6 +9,7 @@
   },
   "vars": {
     "BUYPOINT_MODEL": "gpt-6-astra",
-    "BUYPOINT_ALLOWED_ORIGIN": "https://pilot-fairsight-interface-20.actionforgelabs-site.pages.dev"
+    "BUYPOINT_ALLOWED_ORIGIN": "https://pilot-fairsight-interface-20.actionforgelabs-site.pages.dev",
+    "BUYPOINT_TESTER_EMAILS": "peteblozis@gmail.com"
   }
 }
