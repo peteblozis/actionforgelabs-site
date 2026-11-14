@@ -29,12 +29,12 @@ function runGate(badUrl) {
     return spawnSync(process.execPath,['--test','tests/prompt-lessons-commercial-gate.test.mjs'],{cwd:root,encoding:'utf8',timeout:30000,env});
   } finally { rmSync(root,{recursive:true,force:true}); }
 }
-for (const url of ['https://internal.localhost/receipt','https://receipts.test/receipt','https://user:password@receipts.vendor.com/receipt','https://receipts.vendor.com/receipt#unverifiable']) {
+for (const url of ['https://internal.localhost/receipt','https://receipts.test/receipt','https://user:password@receipts.vendor.com/receipt','https://receipts.vendor.com/receipt#unverifiable', 'https://10.0.0.1/receipt', 'https://192.168.1.20/receipt', 'https://169.254.169.254/receipt', 'https://[::1]/receipt']) {
   test('commercial gate rejects untrustworthy evidence URL: '+url,()=>{
     const result=runGate(url);
     assert.equal(result.error,undefined,String(result.error));
     assert.notEqual(result.status,0,'Gate incorrectly accepted untrustworthy URL');
-    assert.match(result.stdout+result.stderr,/BLOCKED: offer evidence URL embeds credentials or fragments|BLOCKED: offer uses placeholder evidence/);
+    assert.match(result.stdout+result.stderr,/BLOCKED: offer evidence URL embeds credentials or fragments|BLOCKED: offer uses placeholder evidence|BLOCKED: offer evidence URL uses non-public network|BLOCKED: offer evidence URL uses unverified IPv6 host/);
   });
 }
 test('commercial gate accepts structurally sound receipt fixture (NOT actual provider verification)',()=>{
