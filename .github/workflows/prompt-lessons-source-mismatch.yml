@@ -1,0 +1,22 @@
+name: Prompt Lessons source binding negative control
+on:
+  push:
+    branches:
+      - dev/prompt-lessons-source-mismatch-regression-20261110
+  pull_request:
+    paths:
+      - 'tests/prompt-lessons-source-mismatch-negative-control.test.mjs'
+      - 'tests/prompt-lessons-commercial-gate.test.mjs'
+      - '.github/workflows/prompt-lessons-source-mismatch.yml'
+permissions:
+  contents: read
+jobs:
+  source-mismatch-negative-control:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/prompt-lessons-source-mismatch-negative-control.test.mjs

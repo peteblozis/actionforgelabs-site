@@ -21,7 +21,18 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
   assert.ok(typeof v.evidence_url === 'string', 'BLOCKED: '+key+' missing evidence URL');
   const url = new URL(v.evidence_url);
   assert.equal(url.protocol, 'https:', 'BLOCKED: '+key+' evidence must use HTTPS');
-  assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example'), 'BLOCKED: '+key+' uses placeholder evidence');
+  assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example') && !url.hostname.toLowerCase().endsWith('.localhost') && !url.hostname.toLowerCase().endsWith('.local') && !url.hostname.toLowerCase().endsWith('.test') && !url.hostname.toLowerCase().endsWith('.invalid'), 'BLOCKED: '+key+' uses placeholder evidence');
+  assert.ok(!url.username && !url.password && !url.hash, 'BLOCKED: '+key+' evidence URL embeds credentials or fragments');
+  // Evidence links must not point at private networks or link-local services.
+  const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4) {
+    const octets = ipv4.slice(1).map(Number);
+    assert.ok(octets.every(n => n <= 255), 'BLOCKED: invalid IPv4 evidence host');
+    const [a,b] = octets;
+    assert.ok(!(a === 0 || a === 10 || a === 127 || a >= 224 || a === 169 && b === 254 || a === 172 && b >= 16 && b <= 31 || a === 192 && b === 168 || a === 100 && b >= 64 && b <= 127), 'BLOCKED: '+key+' evidence URL uses non-public network');
+  }
+  assert.ok(!host.includes(':'), 'BLOCKED: '+key+' evidence URL uses unverified IPv6 host');
   assert.ok(sha.test(v.source_commit), 'BLOCKED: '+key+' lacks full source commit');
   const time = Date.parse(v.checked_at);
   assert.ok(Number.isFinite(time) && time <= Date.now(), 'BLOCKED: '+key+' has invalid or future check timestamp');
@@ -37,5 +48,17 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
  assert.ok(typeof e.entitlement_readback.license_id === 'string' && e.entitlement_readback.license_id.trim(), 'BLOCKED: no entitlement readback license');
  assert.equal(e.sandbox_checkout.source_commit, e.entitlement_readback.source_commit, 'BLOCKED: checkout and entitlement evidence refer to different builds');
  assert.ok(e.feedback_inbox.received_message_id && e.testers_inbox.received_message_id, 'BLOCKED: sent email alone is not proof of inbox receipt');
+ assert.notEqual(String(e.feedback_inbox.received_message_id).trim(), String(e.testers_inbox.received_message_id).trim(), 'BLOCKED: feedback and testers inboxes reuse one message receipt');
  assert.ok(e.conversion_event.event_id, 'BLOCKED: no observed conversion event ID');
+ // Reject obvious synthetic fixtures even when all source hashes agree.
+ // These checks are not substitutes for independently reading provider records.
+ for (const [label, value] of [
+  ['sandbox transaction', e.sandbox_checkout.transaction_id],
+  ['entitlement license', e.entitlement_readback.license_id],
+  ['feedback inbox receipt', e.feedback_inbox.received_message_id],
+  ['testers inbox receipt', e.testers_inbox.received_message_id],
+  ['conversion event', e.conversion_event.event_id],
+ ]) {
+  assert.ok(typeof value === 'string' && !/^(synthetic|fake|mock|test[-_]?only|placeholder|dummy)/i.test(value.trim()), 'BLOCKED: '+label+' uses a synthetic identifier');
+ }
 });
