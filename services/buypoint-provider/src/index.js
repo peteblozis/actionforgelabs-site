@@ -67,6 +67,7 @@ function json(data, status = 200, origin = "") {
   };
   if (origin) {
     headers["access-control-allow-origin"] = origin;
+    headers["access-control-allow-credentials"] = "true";
     headers.vary = "origin";
   }
   return new Response(JSON.stringify(data), { status, headers });
@@ -205,6 +206,7 @@ export default {
         status: 204,
         headers: {
           "access-control-allow-origin": origin,
+          "access-control-allow-credentials": "true",
           "access-control-allow-methods": "POST, OPTIONS",
           "access-control-allow-headers": "content-type",
           vary: "origin",
