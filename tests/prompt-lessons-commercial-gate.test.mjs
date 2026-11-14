@@ -23,6 +23,16 @@ test('commercial readiness requires complete, source-bound evidence; not just gr
   assert.equal(url.protocol, 'https:', 'BLOCKED: '+key+' evidence must use HTTPS');
   assert.ok(!knownFakeHosts.has(url.hostname.toLowerCase()) && !url.hostname.toLowerCase().endsWith('.example') && !url.hostname.toLowerCase().endsWith('.localhost') && !url.hostname.toLowerCase().endsWith('.local') && !url.hostname.toLowerCase().endsWith('.test') && !url.hostname.toLowerCase().endsWith('.invalid'), 'BLOCKED: '+key+' uses placeholder evidence');
   assert.ok(!url.username && !url.password && !url.hash, 'BLOCKED: '+key+' evidence URL embeds credentials or fragments');
+  // Evidence links must not point at private networks or link-local services.
+  const host = url.hostname.toLowerCase().replace(/^\\[|\\]$/g, '');
+  const ipv4 = host.match(/^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$/);
+  if (ipv4) {
+    const octets = ipv4.slice(1).map(Number);
+    assert.ok(octets.every(n => n <= 255), 'BLOCKED: invalid IPv4 evidence host');
+    const [a,b] = octets;
+    assert.ok(!(a === 0 || a === 10 || a === 127 || a >= 224 || a === 169 && b === 254 || a === 172 && b >= 16 && b <= 31 || a === 192 && b === 168 || a === 100 && b >= 64 && b <= 127), 'BLOCKED: '+key+' evidence URL uses non-public network');
+  }
+  assert.ok(!host.includes(':'), 'BLOCKED: '+key+' evidence URL uses unverified IPv6 host');
   assert.ok(sha.test(v.source_commit), 'BLOCKED: '+key+' lacks full source commit');
   const time = Date.parse(v.checked_at);
   assert.ok(Number.isFinite(time) && time <= Date.now(), 'BLOCKED: '+key+' has invalid or future check timestamp');
